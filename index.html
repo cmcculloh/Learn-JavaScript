@@ -9,6 +9,7 @@
 body{background-color: #000;}
 
 #playscape{
+	position: relative;
 	width: 400px;
 	height: 200px;
 	background-color: #020;
@@ -20,14 +21,14 @@ body{background-color: #000;}
 	    color-stop(0.35, rgb(29,89,14)),
 	    color-stop(0.88, rgb(15,69,12)),
 	    color-stop(0.6, rgb(41,97,39))
-	)
+	);
+	margin:0px;
+	padding:0px;
 }
 
 #person{
+	position: relative;
 	display: block;
-	position: absolute;
-	top: 50px;
-	left: 50px;
 	width: 10px;
 	height: 10px;
 	background-color: #A80;
@@ -37,12 +38,15 @@ body{background-color: #000;}
 	    left top,
 	    color-stop(0.06, rgb(133,80,24)),
 	    color-stop(0.6, rgb(245,106,0))
-	)
+	);
+	top: 50px;
+	left: 50px;
 }
 
-#log{color: #fff;}
+#log{color: #fff;position: relative;}
 
 #console{
+	position: relative;
 	background-color: #000;
 	color: #0F0;
 	width: 400px;
@@ -50,16 +54,20 @@ body{background-color: #000;}
 }
 
 #log{
+	position: relative;
 	background-color: #BBA;
 	width: 400px;
 	height: 200px;
 }
 
 #container{
-	position: absolute;
-	margin:0px 200px;
+	position: relative;
+	display:block;
+	margin:0px auto;
 	width: 400px;
 	height: 800px;
+	top: 0;
+	left: 0;
 }
     </style>
     
@@ -73,7 +81,7 @@ body{background-color: #000;}
 	</div>
 
 	<p>
-	<textarea id="console">MAN.move('up');</textarea>
+	<textarea id="console">MAN.move('down');MAN.move('right');MAN.move('up');MAN.move('left');MAN.animateQueue[0]();</textarea>
 	<input type="button" id="go" value="go"></input>
 	</p>
 	
@@ -101,20 +109,32 @@ body{background-color: #000;}
         var MAN = MAN || {};
         
         MAN.move = function(direction){
-        	var topN, leftN, offset;
+			//keep calculation for next move from happening until first move is done
+			MAN.animateQueue.push(function(){MAN.doMove(direction)});
+        }
+        MAN.animateQueue = [];
+        
+        MAN.doMove = function(direction){
+        	var pos;
+        	pos = $("#person").position();
         	
         	if(direction === "up"){
-				
-        		offset = $("#person").offset();
-        		topN = offset.top;
-        		leftN = offset.left;
-        		
-        		console.log("move man up, top: " + topN + ", left: " + leftN);
-        		
-        		topN -= 10;
-        		$("#person").offset({top:topN, left:leftN});
-        		console.log("move man up, top: " + topN + ", left: " + leftN);
+        		pos.top -= 10;
+        	}else if(direction === "down"){
+        		pos.top += 10;
+        	}else if(direction === "left"){
+        		pos.left -= 10;
+        	}else if(direction === "right"){
+        		pos.left += 10;
         	}
+        	console.log('no dir');
+        	
+        	$("#person").animate(pos, function(){
+        		MAN.animateQueue.shift();
+        		if(typeof MAN.animateQueue[0] === "function"){
+        			MAN.animateQueue[0]();
+        		}
+        	});
         }
     </script>
 </body>
