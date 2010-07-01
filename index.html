@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Learn JavaScript</title>
+    
+    <style type="text/css">
+
+body{background-color: #000;}
+
+#playscape{
+	width: 400px;
+	height: 200px;
+	background-color: #020;
+	-webkit-gradient(
+	    linear,
+	    left bottom,
+	    left top,
+	    color-stop(0.07, rgb(12,41,5)),
+	    color-stop(0.35, rgb(29,89,14)),
+	    color-stop(0.88, rgb(15,69,12)),
+	    color-stop(0.6, rgb(41,97,39))
+	)
+}
+
+#person{
+	display: block;
+	position: absolute;
+	top: 50px;
+	left: 50px;
+	width: 10px;
+	height: 10px;
+	background-color: #A80;
+	-webkit-gradient(
+	    linear,
+	    left bottom,
+	    left top,
+	    color-stop(0.06, rgb(133,80,24)),
+	    color-stop(0.6, rgb(245,106,0))
+	)
+}
+
+#log{color: #fff;}
+
+#console{
+	background-color: #000;
+	color: #0F0;
+	width: 400px;
+	height: 200px;
+}
+
+#log{
+	background-color: #BBA;
+	width: 400px;
+	height: 200px;
+}
+
+#container{
+	position: absolute;
+	margin:0px 200px;
+	width: 400px;
+	height: 800px;
+}
+    </style>
+    
+</head>
+
+<body>
+
+<div id="container">
+	<div id="playscape">
+		<div id="person"></div>
+	</div>
+
+	<p>
+	<textarea id="console">MAN.move('up');</textarea>
+	<input type="button" id="go" value="go"></input>
+	</p>
+	
+	<p id="log"></p>
+</div>	
+ 
+ 
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.js"></script>
+    <script type="text/javascript">
+        $(function()
+        {
+        	$("#go").bind("click", function(){
+        		var code;
+        		
+        		code = $("#console").val();
+
+        		$("#log").html("ran code: " + code);
+        		
+        		eval(code);
+        		
+
+        	});
+        });
+        
+        var MAN = MAN || {};
+        
+        MAN.move = function(direction){
+        	var topN, leftN, offset;
+        	
+        	if(direction === "up"){
+				
+        		offset = $("#person").offset();
+        		topN = offset.top;
+        		leftN = offset.left;
+        		
+        		console.log("move man up, top: " + topN + ", left: " + leftN);
+        		
+        		topN -= 10;
+        		$("#person").offset({top:topN, left:leftN});
+        		console.log("move man up, top: " + topN + ", left: " + leftN);
+        	}
+        }
+    </script>
+</body>
+</html>
