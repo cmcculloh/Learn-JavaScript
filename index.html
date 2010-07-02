@@ -56,8 +56,10 @@ body{background-color: #000;}
 #log{
 	position: relative;
 	background-color: #BBA;
-	width: 400px;
-	height: 200px;
+	width: 380px;
+	height: 180px;
+	color: #003;
+	padding: 10px;
 }
 
 #container{
@@ -104,7 +106,7 @@ MAN.move('left');
         		
         		code = $("#console").val();
 
-        		$("#log").html("ran code: " + code);
+        		$("#log").html("ran code: <pre>" + code + "</pre>");
         		
         		eval(code);
         		
