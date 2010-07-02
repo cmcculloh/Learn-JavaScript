@@ -81,7 +81,13 @@ body{background-color: #000;}
 	</div>
 
 	<p>
-	<textarea id="console">MAN.move('down');MAN.move('right');MAN.move('up');MAN.move('left');MAN.animateQueue[0]();</textarea>
+	<textarea id="console">
+MAN.move('down');
+MAN.move('right');
+MAN.move('up');
+MAN.move('pause', 1000);
+MAN.move('left');
+	</textarea>
 	<input type="button" id="go" value="go"></input>
 	</p>
 	
@@ -108,13 +114,17 @@ body{background-color: #000;}
         
         var MAN = MAN || {};
         
-        MAN.move = function(direction){
+        MAN.move = function(direction, duration){
+			var firstMove = (MAN.movements.length === 0);
+			
 			//keep calculation for next move from happening until first move is done
-			MAN.animateQueue.push(function(){MAN.doMove(direction)});
+			MAN.movements.push(function(){MAN.doMove(direction, duration)});
+			
+			if(firstMove){MAN.startMoving()}
         }
-        MAN.animateQueue = [];
+        MAN.movements = [];
         
-        MAN.doMove = function(direction){
+        MAN.doMove = function(direction, duration){
         	var pos;
         	pos = $("#person").position();
         	
@@ -126,15 +136,21 @@ body{background-color: #000;}
         		pos.left -= 10;
         	}else if(direction === "right"){
         		pos.left += 10;
+        	}else{
+        		//pause;
         	}
-        	console.log('no dir');
         	
-        	$("#person").animate(pos, function(){
-        		MAN.animateQueue.shift();
-        		if(typeof MAN.animateQueue[0] === "function"){
-        			MAN.animateQueue[0]();
-        		}
+        	$("#person").animate(pos, duration, function(){
+        		MAN.movements.shift();//movement is done, so pop it off of queue and call the next one...
+        		MAN.startMoving();
         	});
+        }
+        
+        MAN.startMoving = function(){
+        	var movement = MAN.movements[0];
+    		if(typeof movement === "function"){
+    			movement();
+    		}
         }
     </script>
 </body>
