@@ -43,8 +43,6 @@ body{background-color: #000;}
 	left: 50px;
 }
 
-#log{color: #fff;position: relative;}
-
 #console{
 	position: relative;
 	background-color: #000;
@@ -56,10 +54,12 @@ body{background-color: #000;}
 #log{
 	position: relative;
 	background-color: #BBA;
-	width: 380px;
-	height: 180px;
+	width: 98%;
+	height: 400px;
 	color: #003;
 	padding: 10px;
+	display:block;
+	overflow: scroll;
 }
 
 #container{
@@ -67,7 +67,7 @@ body{background-color: #000;}
 	display:block;
 	margin:0px auto;
 	width: 400px;
-	height: 800px;
+	height: 500px;
 	top: 0;
 	left: 0;
 }
@@ -88,71 +88,151 @@ MAN.move('down');
 MAN.move('right');
 MAN.move('up');
 MAN.move('pause', 1000);
-MAN.move('left');
-	</textarea>
+MAN.move('left');</textarea>
 	<input type="button" id="go" value="go"></input>
 	</p>
-	
-	<p id="log"></p>
 </div>	
+<pre id="log">/*Below is every single line of 
+code that was executed in the 
+order of it's execution.
+
+Values of variables are placed
+at the end of each line on which
+the variable occurs inside of 
+&lt;&gt; brackets in the order
+which the variable occured*/
+	
+</pre>
  
  
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.js"></script>
     <script type="text/javascript">
         $(function()
         {
+        	C.log('$("#go").bind("click", function(){');
         	$("#go").bind("click", function(){
-        		var code;
+        		var code, codeArr;
+        		C.log('var code, codeArr;', 1);
         		
         		code = $("#console").val();
-
-        		$("#log").html("ran code: <pre>" + code + "</pre>");
+				C.log('code = $("#console").val();', 1);
         		
-        		eval(code);
+        		var codeArr = code.split('\n');
+        		C.log("var codeArr = code.split('\\n');", 1);
         		
-
+        		C.log('for(var i = 0; i < codeArr.length; i++){', 1);
+				for(var i = 0; i < codeArr.length; i++){
+					C.log('eval(codeArr[i]);/*codeArr[i] == ' + codeArr[i] + '*/', 2);
+        			eval(codeArr[i]);	
+				}
+				C.log('}', 1);
+				
         	});
+        	C.log('});');
         });
+
+        var C = C || {};
+        
+        /* can not log code inside of this function because it would cause an infinite loop */
+        C.log = function(msg, tabIndent){
+        	var tabs, $log;
+        	
+        	$log = $("#log");
+        	
+        	tabs = '';
+        	tabIndent = tabIndent || 0;
+        	for(i = 0; i < tabIndent; i++){
+        		tabs += '\t';
+        	}
+        	
+        	$log.html($log.html() + tabs + msg + '\n');
+        }
         
         var MAN = MAN || {};
+        C.log('var MAN = MAN || {};//MAN == undefined, so MAN is set to {}');
         
         MAN.move = function(direction, duration){
+			C.log('MAN.move(direction, duration){//&lt;' + direction + '>, &lt;' + duration + '>');
+			
 			var firstMove = (MAN.movements.length === 0);
+			C.log('var firstMove = (MAN.movements.length === 0);', 1);
 			
 			//keep calculation for next move from happening until first move is done
 			MAN.movements.push(function(){MAN.doMove(direction, duration)});
+			C.log('MAN.movements.push(function(){MAN.doMove(direction, duration)});', 1);
 			
-			if(firstMove){MAN.startMoving()}
+			C.log('if(firstMove){', 1);
+			if(firstMove){
+				C.log('MAN.startMoving();', 2);
+				C.log('}', 1);
+				MAN.startMoving();
+			}
+			C.log('}',1);
+			C.log('}');
         }
         MAN.movements = [];
+        C.log('MAN.movements = [];');
         
         MAN.doMove = function(direction, duration){
+        	C.log('MAN.doMove(direction, duration){');
         	var pos;
+        	C.log('var pos;', 1);
         	pos = $("#person").position();
+        	C.log('pos = $("#person").position();', 1);
         	
+        	C.log('if(direction === "up"){', 1);
         	if(direction === "up"){
         		pos.top -= 10;
+        		C.log('pos.top -= 10;', 2);
         	}else if(direction === "down"){
+        		C.log('}else if(direction === "down"){', 1);
         		pos.top += 10;
+        		C.log('pos.top += 10;', 2);
         	}else if(direction === "left"){
+        		C.log('}else if(direction === "left"){', 1);
         		pos.left -= 10;
+        		C.log('pos.left -= 10;', 2);
         	}else if(direction === "right"){
+        		C.log('}else if(direction === "right"){', 1);
         		pos.left += 10;
+        		C.log('pos.left += 10;', 2);
         	}else{
+        		C.log('}else{', 1);
         		//pause;
         	}
+        	C.log('}', 1);
         	
+        	C.log('$("#person").animate(pos, duration, function(){', 1);
         	$("#person").animate(pos, duration, function(){
+        		C.log('function(){//call back function for #person.animate(). Animate is finished...',2);
         		MAN.movements.shift();//movement is done, so pop it off of queue and call the next one...
+        		C.log('MAN.movements.shift();//movement is done, so pop it off of queue and call the next one...', 2);
+        		
+        		C.log('MAN.startMoving();', 2);
+    			C.log('}',1);
         		MAN.startMoving();
+        		
         	});
+        	C.log('});', 1);
+        	C.log('}');
         }
         
         MAN.startMoving = function(){
+        	C.log('MAN.startMoving(){');
         	var movement = MAN.movements[0];
+        	C.log('var movement = MAN.movements[0];', 1);
+    		
+    		C.log('if(typeof movement === "function"){', 1);
     		if(typeof movement === "function"){
+    			C.log('movement();', 2);
+    			C.log('}', 1);
     			movement();
+    		}else{
+    			C.log('}else{', 1);
+    			C.log('//do nothing', 2);
+    			C.log('}', 1);
     		}
+    		C.log('}');
         }
     </script>
 </body>
